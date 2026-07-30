@@ -1,0 +1,23 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-1q2w3e!Q@W#E}
+      # Product ID or edition that the container runs with.
+      # Acceptable values:
+      # - Evaluation (free, no production use rights, 180-day limit)
+      # - EnterpriseDeveloper (free, no production use rights)
+      # - StandardDeveloper (free, no production use rights)
+      # - Express (free)
+      # - Standard (PAID)
+      # - Enterprise (PAID) - CPU core utilization restricted to 20 physical/40 hyperthreaded
+      # - Enterprise Core (PAID) - CPU core utilization up to Operating System Maximum
+      # - I bought a license through a retail sales channel and have a product key to enter
+      # - Standard (Billed through Azure) - Use pay-as-you-go billing through Azure
+      # - Enterprise Core (Billed through Azure) - Use pay-as-you-go billing through Azure
+      - MSSQL_PID=${MSSQL_PID:-EnterpriseDeveloper}
+    ports:
+      - "1433:1433"
+    
