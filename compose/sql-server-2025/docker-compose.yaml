@@ -1,23 +1,48 @@
+# Docker Compose file for Microsoft SQL Server 2025
+#
+# Usage:
+#   docker compose up -d
+#
+# IMPORTANT: The default edition (EnterpriseDeveloper) is for local development
+# and testing only. It may NOT be used in production environments.
+# See https://learn.microsoft.com/en-us/sql/sql-server/editions-and-components-of-sql-server
+#
+# Environment variables (see .env.example for details):
+#   MSSQL_SA_PASSWORD  - SA (system administrator) password (default: 1q2w3e!Q@W#E)
+#   MSSQL_PID          - Product edition (default: EnterpriseDeveloper)
+
 services:
   mssql:
+    # For available image tags, see https://mcr.microsoft.com/en-us/product/mssql/server/about
     image: mcr.microsoft.com/mssql/server:2025-latest
     container_name: mssql
     environment:
+      # Accept the End-User License Agreement (EULA).
+      # Setting ACCEPT_EULA=Y confirms acceptance:
+      # https://hub.docker.com/_/microsoft-mssql-server
       - ACCEPT_EULA=Y
+      # SA (system administrator) password.
+      # Must meet complexity requirements: at least 8 characters, with uppercase,
+      # lowercase, digits, and/or special characters.
+      # Default value is for local development only — change for production.
       - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-1q2w3e!Q@W#E}
-      # Product ID or edition that the container runs with.
+      # Product ID (edition) that the container runs with.
       # Acceptable values:
-      # - Evaluation (free, no production use rights, 180-day limit)
-      # - EnterpriseDeveloper (free, no production use rights)
-      # - StandardDeveloper (free, no production use rights)
-      # - Express (free)
-      # - Standard (PAID)
-      # - Enterprise (PAID) - CPU core utilization restricted to 20 physical/40 hyperthreaded
-      # - Enterprise Core (PAID) - CPU core utilization up to Operating System Maximum
-      # - I bought a license through a retail sales channel and have a product key to enter
-      # - Standard (Billed through Azure) - Use pay-as-you-go billing through Azure
-      # - Enterprise Core (Billed through Azure) - Use pay-as-you-go billing through Azure
+      #   Free:
+      #     - Evaluation          — full feature set, production use allowed, 180-day limit
+      #     - Express             — production use allowed, resource-limited (CPU/memory/size)
+      #   Development only (no production use rights):
+      #     - EnterpriseDeveloper — default, full feature set
+      #     - StandardDeveloper
+      #   Paid:
+      #     - Standard
+      #     - Enterprise          — CPU core utilisation restricted to 20 physical / 40 hyperthreaded
+      #     - Enterprise Core     — CPU core utilisation up to operating system maximum
+      #   Retail / Azure billed:
+      #     - A product key (retail sales channel)
+      #     - Standard (Billed through Azure)
+      #     - Enterprise Core (Billed through Azure)
       - MSSQL_PID=${MSSQL_PID:-EnterpriseDeveloper}
     ports:
+      # Map host port 1433 to container port 1433 (SQL Server default).
       - "1433:1433"
-    
