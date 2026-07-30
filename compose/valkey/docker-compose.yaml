@@ -1,0 +1,30 @@
+# Docker Compose file for Valkey (Alpine)
+#
+# Usage:
+#   docker compose up -d
+#
+# By default, Valkey starts with no password — any client can connect.
+# To require a password, set VALKEY_PASSWORD in your .env file and uncomment
+# the "command" line below. Clients must then authenticate with AUTH
+# <password>.
+#
+# Environment variables (see .env.example for details):
+#   VALKEY_PASSWORD - Optional password for client connections
+
+services:
+  valkey:
+    # For available image tags, see https://hub.docker.com/_/valkey
+    image: valkey/valkey:9-alpine
+    container_name: valkey
+    # To enable password authentication, set VALKEY_PASSWORD in your .env file
+    # and uncomment the following line:
+    # command: valkey-server --requirepass ${VALKEY_PASSWORD}
+    ports:
+      # Map host port 6379 to container port 6379 (Valkey default).
+      - "6379:6379"
+    volumes:
+      # Persist data beyond container lifetime.
+      - valkey_data:/data
+
+volumes:
+  valkey_data:
