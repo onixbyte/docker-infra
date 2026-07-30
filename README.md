@@ -3,13 +3,6 @@
 A collection of Docker infrastructure files for quick deployment of
 development services.
 
-## Contents
-
-- **`compose/`** — Docker Compose files for various services
-  - [`sql-server-2025`](compose/sql-server-2025/) — Microsoft SQL Server 2025
-- **`get-docker.sh`** — Docker Engine installation script for Linux, synchronised
-  weekly from upstream
-
 ## Usage
 
 Each service lives under its own directory within `compose/`. Copy the

@@ -1,0 +1,33 @@
+# Docker Compose file for PostgreSQL (Alpine)
+#
+# Usage:
+#   docker compose up -d
+#
+# Environment variables (see .env.example for details):
+#   POSTGRES_USER     - Superuser name (default: postgres)
+#   POSTGRES_PASSWORD - Superuser password (default: postgres)
+#   POSTGRES_DB       - Default database created on first start (default: postgres)
+
+services:
+  postgres:
+    # For available image tags, see https://hub.docker.com/_/postgres
+    image: postgres:18-alpine
+    container_name: postgres
+    environment:
+      # Superuser name. Defaults to "postgres" if not set.
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      # Superuser password.
+      # Default value is for local development only — change for production.
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      # Database created automatically on first start.
+      # Defaults to the value of POSTGRES_USER if not set.
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+    ports:
+      # Map host port 5432 to container port 5432 (PostgreSQL default).
+      - "5432:5432"
+    volumes:
+      # Persist data beyond container lifetime.
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
