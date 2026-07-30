@@ -1,0 +1,36 @@
+# Docker Compose file for MySQL (Alpine)
+#
+# Usage:
+#   docker compose up -d
+#
+# Environment variables (see .env.example for details):
+#   MYSQL_ROOT_PASSWORD - Root password (default: mysql)
+#   MYSQL_DATABASE      - Database created on first start (default: mysql)
+#   MYSQL_USER          - Additional user created on first start (default: root)
+#   MYSQL_PASSWORD      - Password for the additional user (default: mysql)
+
+services:
+  mysql:
+    # For available image tags, see https://hub.docker.com/_/mysql
+    image: mysql:8-alpine
+    container_name: mysql
+    environment:
+      # Root password.
+      # Default value is for local development only — change for production.
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-mysql}
+      # Database created automatically on first start.
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-mysql}
+      # Additional user created automatically on first start.
+      - MYSQL_USER=${MYSQL_USER:-root}
+      # Password for the additional user.
+      # Default value is for local development only — change for production.
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-mysql}
+    ports:
+      # Map host port 3306 to container port 3306 (MySQL default).
+      - "3306:3306"
+    volumes:
+      # Persist data beyond container lifetime.
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
