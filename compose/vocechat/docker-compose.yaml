@@ -1,0 +1,9 @@
+services:
+  vocechat:
+    image: privoce/vocechat-server:latest
+    container_name: vocechat
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/lib/vocechat/data:/home/vocechat-server/data
+    restart: always
