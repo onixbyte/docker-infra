@@ -1,0 +1,36 @@
+# Docker Compose file for MariaDB
+#
+# Usage:
+#   docker compose up -d
+#
+# Environment variables (see .env.example for details):
+#   MARIADB_ROOT_PASSWORD - Root password (default: mariadb)
+#   MARIADB_DATABASE      - Database created on first start (default: mariadb)
+#   MARIADB_USER          - Additional user created on first start (default: mariadb)
+#   MARIADB_PASSWORD      - Password for the additional user (default: mariadb)
+
+services:
+  mariadb:
+    # For available image tags, see https://hub.docker.com/_/mariadb
+    image: mariadb:lts
+    container_name: mariadb
+    environment:
+      # Root password.
+      # Default value is for local development only — change for production.
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-mariadb}
+      # Database created automatically on first start.
+      - MARIADB_DATABASE=${MARIADB_DATABASE:-mariadb}
+      # Additional user created automatically on first start.
+      - MARIADB_USER=${MARIADB_USER:-mariadb}
+      # Password for the additional user.
+      # Default value is for local development only — change for production.
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-mariadb}
+    ports:
+      # Map host port 3306 to container port 3306 (MariaDB default).
+      - "3306:3306"
+    volumes:
+      # Persist data beyond container lifetime.
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
