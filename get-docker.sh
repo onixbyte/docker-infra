@@ -94,12 +94,19 @@ set -e
 #
 # Note: Starting the service requires appropriate privileges to manage system services.
 #
+# Installing docker-sbx
+#
+# Set the SBX environment variable to "1" to also install the docker-sbx
+# package alongside the regular Docker Engine packages:
+#
+#   $ curl -fsSL https://get.docker.com | sudo SBX=1 sh
+#
 # ==============================================================================
 
 
 # Git commit from https://github.com/docker/docker-install when
 # the script was uploaded (Should only be modified by upload job):
-SCRIPT_COMMIT_SHA="5ce20f2eef3615d08fea941eda5a109e949e8ebf"
+SCRIPT_COMMIT_SHA="42dcae692436f34526524ed46d3b32885c9355f5"
 
 # strip "v" prefix if present
 VERSION="${VERSION#v}"
@@ -131,6 +138,18 @@ mirror=''
 DRY_RUN=${DRY_RUN:-}
 REPO_ONLY=${REPO_ONLY:-0}
 NO_AUTOSTART=${NO_AUTOSTART:-0}
+SBX=${SBX:-0}
+
+# Provide a helpful usage statement when --help or any invalid argument is passed
+# to the script. Exit code deliberately not included here as error depends on
+# argument provided.
+usage() {
+	echo
+	echo "USAGE: "
+	echo "    ${0} [--channel <stable|test>] [--mirror <Aliyun|AzureChinaCloud>] [--version <VERSION>] [--setup-repo] [--no-autostart] [--dry-run] [--help]"
+	echo
+}
+
 while [ $# -gt 0 ]; do
 	case "$1" in
 		--channel)
@@ -155,8 +174,14 @@ while [ $# -gt 0 ]; do
 		--no-autostart)
 			NO_AUTOSTART=1
 			;;
+		--help)
+			usage
+			exit 0
+			;;
 		--*)
 			echo "Illegal option $1"
+			usage
+			exit 1
 			;;
 	esac
 	shift $(( $# > 0 ? 1 : 0 ))
@@ -549,7 +574,7 @@ do_install() {
 		ubuntu.focal|ubuntu.bionic|ubuntu.xenial|ubuntu.trusty)
 			deprecation_notice "$lsb_dist" "$dist_version"
 			;;
-		ubuntu.oracular|ubuntu.mantic|ubuntu.lunar|ubuntu.kinetic|ubuntu.impish|ubuntu.hirsute|ubuntu.groovy|ubuntu.eoan|ubuntu.disco|ubuntu.cosmic)
+		ubuntu.questing|ubuntu.oracular|ubuntu.mantic|ubuntu.lunar|ubuntu.kinetic|ubuntu.impish|ubuntu.hirsute|ubuntu.groovy|ubuntu.eoan|ubuntu.disco|ubuntu.cosmic)
 			deprecation_notice "$lsb_dist" "$dist_version"
 			;;
 		fedora.*)
@@ -630,6 +655,9 @@ do_install() {
 				fi
 				if version_gte "28.2"; then
 					pkgs="$pkgs docker-model-plugin"
+				fi
+				if [ "$SBX" = "1" ]; then
+					pkgs="$pkgs docker-sbx"
 				fi
 				if ! is_dry_run; then
 					set -x
@@ -742,6 +770,9 @@ do_install() {
 				fi
 				if version_gte "23.0"; then
 						pkgs="$pkgs docker-buildx-plugin docker-model-plugin"
+				fi
+				if [ "$SBX" = "1" ]; then
+					pkgs="$pkgs docker-sbx"
 				fi
 				if ! is_dry_run; then
 					set -x
