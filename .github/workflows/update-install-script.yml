@@ -2,9 +2,13 @@ name: Synchronise Upstream Script
 
 on:
   schedule:
-    # Runs at 02:00 GMT every Thursday (4 represents Thursday)
+    # Runs at 02:00 UTC every Thursday (4 represents Thursday)
     - cron: '0 2 * * 4'
   workflow_dispatch: # Allows manual triggering to test the workflow behaviour
+
+# Grant the built-in GITHUB_TOKEN permission to push the synced script
+permissions:
+  contents: write
 
 jobs:
   update-script:
@@ -12,27 +16,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          # Ensure we have the necessary credentials to push changes
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download the latest script
         run: |
           # Fetch the latest installation script from Docker
           curl -fsSL https://get.docker.com -o get-docker.sh
-          
+
           # Ensure the file is executable
           chmod +x get-docker.sh
 
       - name: Check for changes and commit
         run: |
           # Configure Git identity for the automated commit
-          git config user.name "gitea-actions-bot"
+          git config user.name "onixbyte"
           git config user.email "actions@onixbyte.dev"
-          
+
           # Add the script to the staging area
           git add get-docker.sh
-          
+
           # Determine if any modifications have occurred
           if git diff --staged --quiet; then
             echo "No modifications detected. The script is currently up to date."
